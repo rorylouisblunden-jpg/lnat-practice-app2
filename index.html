@@ -1096,28 +1096,43 @@ Return ONLY JSON matching this structure:
        API EXECUTION & ERROR HANDLING
        ========================================================================= */
 
+    function cleanSchema(obj) {
+      if (!obj || typeof obj !== 'object') return obj;
+      if (Array.isArray(obj)) return obj.map(cleanSchema);
+      const cleaned = {};
+      for (const [key, val] of Object.entries(obj)) {
+        if (key === 'type' && typeof val === 'string') {
+          cleaned[key] = val.toLowerCase();
+        } else {
+          cleaned[key] = cleanSchema(val);
+        }
+      }
+      return cleaned;
+    }
+
     async function executeGeminiRequest(prompt, schema) {
       const apiKey = sessionApiKey || "AQ.Ab8RN6KPvscrkFS0q9vJA8ynd-nmD7Uo_WpxB5Js4Xn7ndhXOQ";
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`;
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
 
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: {
             responseMimeType: "application/json",
-            responseSchema: schema,
+            responseSchema: cleanSchema(schema),
             temperature: 0.8
           }
         })
       });
 
       if (!response.ok) {
-        throw new Error(`API Auth/Quota Error (${response.status}). Please check your API key.`);
+        const errorData = await response.json().catch(() => ({}));
+        const message = errorData.error?.message || `API Error (${response.status})`;
+        throw new Error(message);
       }
 
       const result = await response.json();
