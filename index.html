@@ -1111,12 +1111,14 @@ Return ONLY JSON matching this structure:
 
     async function executeGeminiRequest(prompt, schema) {
       const apiKey = sessionApiKey || "AQ.Ab8RN6KPvscrkFS0q9vJA8ynd-nmD7Uo_WpxB5Js4Xn7ndhXOQ";
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`;
 
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey,
+          'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
