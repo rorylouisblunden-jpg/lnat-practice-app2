@@ -1092,16 +1092,11 @@ Return ONLY JSON matching this structure:
     }
 
 
-    /* =========================================================================
+/* =========================================================================
        API EXECUTION & ERROR HANDLING
        ========================================================================= */
 
     async function executeGeminiRequest(prompt, schema) {
-        const apiKey = sessionApiKey;
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-        // Fallback
-      }
-
       const apiKey = sessionApiKey || "AQ.Ab8RN6IaMhRwgY9WBDWBKWZ850Hyi9fyKZi-_LHC83m1zfyNMw";
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
