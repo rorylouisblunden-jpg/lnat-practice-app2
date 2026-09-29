@@ -1110,16 +1110,9 @@ Return ONLY JSON matching this structure:
     }
 
     async function executeGeminiRequest(prompt, schema) {
-      const apiKey = sessionApiKey || "AQ.Ab8RN6KPvscrkFS0q9vJA8ynd-nmD7Uo_WpxB5Js4Xn7ndhXOQ";
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`;
-
-      const response = await fetch(apiUrl, {
+      const response = await fetch('/api/generate', {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'x-goog-api-key': apiKey,
-          'Authorization': `Bearer ${apiKey}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: {
@@ -1130,13 +1123,13 @@ Return ONLY JSON matching this structure:
         })
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const message = errorData.error?.message || `API Error (${response.status})`;
+        const message = result.error?.message || `Server Error (${response.status})`;
         throw new Error(message);
       }
 
-      const result = await response.json();
       const jsonStr = result.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!jsonStr) throw new Error("Empty response received from generation engine.");
 
