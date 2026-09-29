@@ -1097,22 +1097,12 @@ Return ONLY JSON matching this structure:
        ========================================================================= */
 
     async function executeGeminiRequest(prompt, schema) {
-      try {
-        const proxyRes = await fetch('/api/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }] })
-        });
-        if (proxyRes.ok) {
-          const proxyData = await proxyRes.json();
-          const jsonText = proxyData.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (jsonText) return JSON.parse(jsonText);
-        }
-      } catch (e) {
+        const apiKey = sessionApiKey;
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
         // Fallback
       }
 
-      const apiKey = sessionApiKey || "";
+      const apiKey = sessionApiKey || "AQ.Ab8RN6IaMhRwgY9WBDWBKWZ850Hyi9fyKZi-_LHC83m1zfyNMw";
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
       const response = await fetch(apiUrl, {
