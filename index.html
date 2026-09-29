@@ -1097,12 +1097,15 @@ Return ONLY JSON matching this structure:
        ========================================================================= */
 
     async function executeGeminiRequest(prompt, schema) {
-      const apiKey = sessionApiKey || "AQ.Ab8RN6IaMhRwgY9WBDWBKWZ850Hyi9fyKZi-_LHC83m1zfyNMw";
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+      const apiKey = sessionApiKey || "AQ.Ab8RN6KPvscrkFS0q9vJA8ynd-nmD7Uo_WpxB5Js4Xn7ndhXOQ";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`;
 
       const response = await fetch(apiUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: {
@@ -1114,7 +1117,7 @@ Return ONLY JSON matching this structure:
       });
 
       if (!response.ok) {
-        throw new Error(`API Auth/Quota Error (${response.status}). Please set your API key.`);
+        throw new Error(`API Auth/Quota Error (${response.status}). Please check your API key.`);
       }
 
       const result = await response.json();
